@@ -6,7 +6,6 @@ import logging
 import hashlib
 import sqlite3
 import _thread
-import functools
 from datetime import datetime
 from utils import myutils
 from utils import relay
@@ -15,12 +14,7 @@ from utils import display
 from utils import configsaver
 
 # Configuration:
-DEFAULT_CACHE_DIR=functools.reduce(
-    os.path.join,
-    [ os.path.expanduser("~"), ".local", "greenpass" ]
-)
-
-DATABASE_PATH = f"DEFAULT_CACHE_DIR/greenpass.db"
+DATABASE_PATH = "greenpass.db"
 
 display.draw_line1("STARTING")
 
@@ -96,10 +90,8 @@ for line in sys.stdin:
     elif payload.find('CFG:') >= 0:        
         print("Found Configuration QR Code")
         display.draw_line1,("CONFIG",None,display.ICON_CONFIG)
-        
         if(configsaver.write_config(payload)):
         	display.draw_line1,("RESTARTING",None,display.ICON_CONFIG)
-        	cofigsaver.rebooy_system()
 
 conn.close()
 display.off();

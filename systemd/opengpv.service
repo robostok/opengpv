@@ -1,5 +1,5 @@
 [Unit]
-Description=Greenpass Verifier Service
+Description=OpenGPV Service
 After=network.target
 
 [Service]
@@ -7,7 +7,7 @@ Type=simple
 # Another Type: forking
 User=pi
 WorkingDirectory=/home/pi/opengpv
-ExecStart=/bin/sh -c 'zbarcam -Sdisable -Sqrcode.enable --raw --nodisplay -v --prescale=844x640 /dev/video0 | python3 /home/pi/greenpass/opengpv.py'
+ExecStart=/bin/sh -c 'zbarcam -Sdisable -Sqrcode.enable --raw --nodisplay -v --prescale=844x640 /dev/video0 | python3 /home/pi/opengpv/opengpv.py'
 Restart=on-failure
 # Other restart options: always, on-abort, etc
 

@@ -1,0 +1,6 @@
+# TODO List
+
+- Self update
+- Anti Flood with hash First Name + Last name + Birth, with housekeeper thread, or in-memory data
+- Configuration from QR code
+

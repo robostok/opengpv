@@ -1,0 +1,12 @@
+base45
+cbor2
+colorama
+Pillow
+pytz
+pyasn1
+pyOpenSSL
+requests
+termcolor
+cose
+adafruit-circuitpython-ssd1306
+oled-text

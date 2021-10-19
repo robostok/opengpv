@@ -20,7 +20,7 @@ DEFAULT_CACHE_DIR=functools.reduce(
     [ os.path.expanduser("~"), ".local", "greenpass" ]
 )
 
-DATABASE_PATH = f"DEFAULT_CACHE_DIR/greenpass.db"
+DATABASE_PATH = f"{DEFAULT_CACHE_DIR}/greenpass.db"
 
 display.draw_line1("STARTING")
 

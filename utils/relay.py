@@ -43,3 +43,11 @@ def buzzer_ready():
        b.stop()
        time.sleep(0.1)
 
+def buzzer_config():
+    b = TonalBuzzer(buzzer_pin)
+    for i in range(2):
+        b.play(Tone("A5"))
+        time.sleep(1)
+        b.stop()
+        time.sleep(0.2) 
+

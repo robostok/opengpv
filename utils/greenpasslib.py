@@ -395,8 +395,7 @@ class GreenPassParser(object):
         if filetype == "txt":
             if path == "-":
                 line = sys.stdin.read().replace("\n", "")
-                outdata = outdata.replace("\n","")
-                print("Outdata: ",outdata)
+                outdata = outdata.replace("\n","")                
             else:
                 # Modified behavior: if reading from zbarcam input is "continuously" piped so reading
                 # through a loop is needed. The workaround is if not passing an existent path to try 
@@ -407,7 +406,6 @@ class GreenPassParser(object):
                 else:
                     outdata = path.replace("\n","")
                     outdata = bytes(outdata.encode("ASCII"))
-                    print("Outdata STDIN: ", outdata)
 
         data = b":".join(outdata.split(b":")[1::])
         decoded = base45.b45decode(data)
@@ -507,17 +505,6 @@ def verify_certificate(path, filetype="txt"):
     elif gpp.certificate_type == "r":
         certificate_type = "Recovery"
 
-    print("{:30s} {}".format("Certificate type", colored(certificate_type, "blue")))
-
-    for qr_info in gpp.qr_info.items():
-        if qr_info[0] == "Release Date" or qr_info[0] == "Expiration Date":
-            print("{:30s} {}".format(qr_info[0], datetime.fromtimestamp(qr_info[1], pytz.utc)))
-        else:
-            print("{:30s} {}".format(qr_info[0], qr_info[1]))
-
-    for personal_info in gpp.personal_info.items():
-        print("{:30s} {}".format(personal_info[0], personal_info[1]))
-
     for el in gpp.certificate_info:
         dn = -1
         sd = -1
@@ -539,8 +526,7 @@ def verify_certificate(path, filetype="txt"):
             elif cert_info[0] == "Test result":
                 t = TestResult(int(cert_info[1]))
                 # Strict check, also unknown do not get validated
-                positive = not t.is_negative()
-                print("  {:28s} {}".format(cert_info[0], t))
+                positive = not t.is_negative()                
             elif cert_info[0] == "Validity from":
                 try:
                     recovery_from = datetime.strptime(cert_info[1], "%Y-%m-%d")
@@ -557,13 +543,9 @@ def verify_certificate(path, filetype="txt"):
             elif cert_info[0] == "Total doses":
                 sd = cert_info[1]
             elif cert_info[0] == "Vaccine product number":
-                vaccine = cert_info[1]
-                cout = colored(Vaccine(cert_info[1]).get_pretty_name(), "blue")
-                print("  {:28s} {}".format(cert_info[0], cout))
+                vaccine = cert_info[1]                
             elif cert_info[0] == "Test type":
-                testtype = cert_info[1]
-                cout = colored(TestType(cert_info[1]).get_pretty_name(), "blue")
-                print("  {:28s} {}".format(cert_info[0], cout))
+                testtype = cert_info[1]                                
             elif cert_info[0] == "Vaccination Date":
                 try:
                     vaccinedate = datetime.strptime(cert_info[1], "%Y-%m-%d")
@@ -577,22 +559,7 @@ def verify_certificate(path, filetype="txt"):
                 except:
                     testcollectiondate = 0
                 certdate = testcollectiondate
-            elif cert_info[0] == "Manufacturer and type":
-                cout = colored(Manufacturer(cert_info[1]).get_pretty_name(), "blue")
-                print("  {:28s} {}".format(cert_info[0], cout))
-            elif cert_info[0] == "Target disease":
-                cout = colored(Disease(cert_info[1]).get_pretty_name(), "blue")
-                print("  {:28s} {}".format(cert_info[0], cout))
-            else:
-                print("  {:28s} {}".format(cert_info[0], cert_info[1]))
-
-        # Complex fields parse
-        if dn > 0 and sd > 0:
-            if dn == sd:
-                print("  {:28s}".format("Doses"), colored("{}/{}".format(dn, sd), "green"))
-            elif dn < sd and dn != 0:
-                print("  {:28s}".format("Doses"), colored("{}/{}".format(dn, sd), "yellow"))
-
+        
         # Check test validity
         if testcollectiondate != None and testtype != None:
             color = "white"
@@ -638,35 +605,24 @@ def verify_certificate(path, filetype="txt"):
                 )
                 expired = False
 
-            print("  {:28s} {} ({})".format(
-                "{} Date".format(certificate_type),
-                colored(certdate, color), colored(remaining_days, color)
-            ))
-
 
     cup = CertificateUpdater()
     key = cup.get_key(gpp.get_kid())
     gpp.set_key(key)
     verified = gpp.verify()
 
-    if verified:
-        color = "green"
-    else:
-        color = "red"
-
-    print("{:30s} {}".format("Verified", colored(verified, color)))
-
     unknown_cert = gpp.certificate_type not in ( "v", "t", "r" )
 
     valid = verified and not expired and not positive and not unknown_cert
-    # Unix return code is inverted
+
     rt = {
         "first_name" : gpp.personal_info["First Name"],
         "last_name" : gpp.personal_info["Family Name"],
         "birth_date": gpp.personal_info["Date of Birth"],
         "valid": valid }
+
     return rt
-    #return valid
+    
 
 def dump_settings():
     sm = SettingsManager()

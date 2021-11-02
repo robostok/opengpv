@@ -11,12 +11,9 @@ def runcommand (cmd):
     return proc.returncode, std_out, std_err
 
 def datediff(date_start, date_end):
-    date_format_str = '%Y-%m-%d %H:%M:%S'
-    print ("Date Start: ", date_start)
-    print ("Date End: ", date_end)
+    date_format_str = '%Y-%m-%d %H:%M:%S'    
     start = datetime.strptime(date_start, date_format_str)
     end =   datetime.strptime(date_end, date_format_str)
     # Get the interval between two datetimes as timedelta object
-    diff = end - start
-    print ("Diff: ", diff.total_seconds())    
+    diff = end - start  
     return diff.total_seconds()

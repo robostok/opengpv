@@ -15,6 +15,7 @@ echo $EXP_VER
 echo $CUR_VER
 
 if version_gt "$EXP_VER" "$CUR_VER"; then
+    git reset --hard
     git pull
     pip3 install -r requirements.txt
     sudo service opengpv restart

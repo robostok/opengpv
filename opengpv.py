@@ -36,7 +36,7 @@ if  os.path.exists(DATABASE_PATH) == False:
 
 # At this point the database exists, so connect to database
 conn = sqlite3.connect(DATABASE_PATH)
- 
+
 # Used Variables
 antiflood_time_gp = 15 #Set in configuration
 
@@ -46,13 +46,13 @@ relay.buzzer_ready()
 for line in sys.stdin:
     gp_status = -1 #Aladeen
     payload = line.replace('\n', '')
-    
+
     if payload.find('HC1:') >= 0: #Is a Green Pass
         logging.debug("Found a probable Green pass QR Code")
 
         hash_object = hashlib.md5(payload.encode())
         gp_hash = hash_object.hexdigest()
-        
+
         # 2. Check if is in recent hash table
         cursor = conn.execute(f"SELECT GP_HASH, STATUS, LAST_SEEN from GP_HASHES WHERE GP_HASH='{gp_hash}'")
         for row in cursor:
@@ -60,10 +60,10 @@ for line in sys.stdin:
                 last_seen_from_now = myutils.datediff(row[2], datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'))
                 if (last_seen_from_now < antiflood_time_gp):
                 	gp_status["valid"] = False
-                	print("Anti-Flood protection activated")            
+                	print("Anti-Flood protection activated")
 
         # 4. Check validity
-        if gp_status<0:
+        if gp_status==-1:
             # Echo Verifying on display
             gp_status = greenpasslib.verify_greenpass(payload)
 
@@ -78,15 +78,15 @@ for line in sys.stdin:
             _thread.start_new_thread(display.draw_line,("NOT VAL","READY",display.ICON_ERR.display.ICON_QR))
             _thread.start_new_thread(relay.buzzer_ko,())
 
-        # 6. Save Transaction into database        
+        # 6. Save Transaction into database
         conn.execute(f"REPLACE INTO GP_HASHES (GP_HASH,STATUS,LAST_SEEN) \
       VALUES ('{gp_hash}', {gp_status['valid']}, datetime('now') )");
         conn.commit()
-        
-    elif payload.find('CFG:') >= 0:        
+
+    elif payload.find('CFG:') >= 0:
         logging.debug("Found Configuration QR Code")
         display.draw_line1,("CONFIG",None,display.ICON_CONFIG)
-        
+
         if(configsaver.write_config(payload)):
         	display.draw_line1,("RESTARTING",None,display.ICON_CONFIG)
         	_thread.start_new_thread(relay.buzzer_config,())

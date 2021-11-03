@@ -75,7 +75,7 @@ for line in sys.stdin:
             _thread.start_new_thread(relay.close_relay,())
 
         else :
-            _thread.start_new_thread(display.draw_line,("NON VAL","PRONTO",display.ICON_ERR.display.ICON_QR))
+            _thread.start_new_thread(display.draw_line,("NON VAL","PRONTO",display.ICON_ERR,display.ICON_QR))
             _thread.start_new_thread(relay.buzzer_ko,())
 
         # 6. Save Transaction into database

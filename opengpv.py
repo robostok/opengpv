@@ -22,7 +22,7 @@ DEFAULT_CACHE_DIR=functools.reduce(
 
 DATABASE_PATH = f"{DEFAULT_CACHE_DIR}/greenpass.db"
 
-display.draw_line1("STARTING")
+display.draw_line1("AVVIO")
 
 # 1. Create Database and Tables
 if  os.path.exists(DATABASE_PATH) == False:
@@ -40,7 +40,7 @@ conn = sqlite3.connect(DATABASE_PATH)
 # Used Variables
 antiflood_time_gp = 15 #Set in configuration
 
-display.draw_line1("READY",None,display.ICON_QR)
+display.draw_line1("PRONTO",None,display.ICON_QR)
 relay.buzzer_ready()
 
 for line in sys.stdin:
@@ -70,12 +70,12 @@ for line in sys.stdin:
         #Call Greenpass library to check validity
         if gp_status["valid"]:
             # 5. Activate Actuator, Bell and whistles
-            _thread.start_new_thread(display.draw_line1,("VALID","READY",display.ICON_OK,display.ICON_QR))
+            _thread.start_new_thread(display.draw_line1,("VALIDO","PRONTO",display.ICON_OK,display.ICON_QR))
             _thread.start_new_thread(relay.buzzer_ok,())
             _thread.start_new_thread(relay.close_relay,())
 
         else :
-            _thread.start_new_thread(display.draw_line,("NOT VAL","READY",display.ICON_ERR.display.ICON_QR))
+            _thread.start_new_thread(display.draw_line,("NON VAL","PRONTO",display.ICON_ERR.display.ICON_QR))
             _thread.start_new_thread(relay.buzzer_ko,())
 
         # 6. Save Transaction into database
@@ -88,7 +88,7 @@ for line in sys.stdin:
         display.draw_line1,("CONFIG",None,display.ICON_CONFIG)
 
         if(configsaver.write_config(payload)):
-        	display.draw_line1,("RESTARTING",None,display.ICON_CONFIG)
+        	display.draw_line1,("RIAVVIO",None,display.ICON_CONFIG)
         	_thread.start_new_thread(relay.buzzer_config,())
         	logging.debug("Rebooting System after config update")
         	configsaver.reboot_system()
